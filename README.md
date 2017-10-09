@@ -1,4 +1,4 @@
-Yellow Burguer Quest
+Yellow Burger Quest
 ====================
 
 (Working title)
