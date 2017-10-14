@@ -1015,7 +1015,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   horizontalRayCount: 4
-  verticalRayCount: 4
+  verticalRayCount: 8
   passengerMask:
     serializedVersion: 2
     m_Bits: 256
@@ -1122,3 +1122,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 53666029}
+  LerpDelta: 0.6
