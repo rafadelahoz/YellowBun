@@ -13,7 +13,7 @@ public class Controller2D : RaycastController {
         base.Start();
     }
 
-    public void Move(Vector3 velocity)
+    public void Move(Vector3 velocity, bool standingOnPlatform = false)
     {
         collisions.Reset();
         collisions.previousVelocity = velocity;
@@ -31,6 +31,9 @@ public class Controller2D : RaycastController {
             VerticalCollisions(ref velocity);
 
         transform.Translate(velocity);
+
+        if (standingOnPlatform)
+            collisions.below = true;
     }
 
 	void HorizontalCollisions(ref Vector3 velocity)
@@ -38,7 +41,7 @@ public class Controller2D : RaycastController {
 		float directionX = Mathf.Sign(velocity.x);
 		float rayLength = Mathf.Abs(velocity.x) + skinWidth;
 
-		Vector2 firstOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
+		Vector2 firstOrigin = (directionX < 0) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
 		Vector2 rayOrigin = Vector2.zero;
         for (int i = 0; i < horizontalRayCount; i++)
         {
@@ -47,12 +50,18 @@ public class Controller2D : RaycastController {
 
             if (hit)
             {
+                // Check for collisions from inside
+                if (hit.distance == 0)
+                {
+                    continue;
+                }
+
                 float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
                 if (i == 0 && slopeAngle <= maxClimbAngle)
                 {
-                    if (collisions.climbingSlope)
+                    if (collisions.descendingSlope)
                     {
-                        collisions.climbingSlope = false;
+                        collisions.descendingSlope = false;
                         velocity = collisions.previousVelocity;
                     }
 
@@ -92,11 +101,11 @@ public class Controller2D : RaycastController {
         float directionY = Mathf.Sign(velocity.y);
         float rayLength = Mathf.Abs(velocity.y) + skinWidth;
 
-        Vector2 firstOrigin = (directionY == -1) ? raycastOrigins.bottomLeft : raycastOrigins.topLeft;
+        Vector2 firstOrigin = (directionY < 0) ? raycastOrigins.bottomLeft : raycastOrigins.topLeft;
         Vector2 rayOrigin = Vector2.zero;
         for (int i = 0; i < verticalRayCount; i++)
         {
-            rayOrigin = firstOrigin + Vector2.right * (verticalRaySpacing * i);
+            rayOrigin = firstOrigin + Vector2.right * (verticalRaySpacing * i + velocity.x);
             RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, collisionMask);
 
             if (hit)
