@@ -136,7 +136,7 @@ public class MovingPlatformController : RaycastController {
                 // Find a passenger
                 RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, passengerMask);
                 // If found, stick platform and passenger together, then move the passenger
-                if (hit)
+                if (hit && hit.distance != 0)
                 {
                     if (!movedPassengers.Contains(hit.transform))
                     {
@@ -164,7 +164,7 @@ public class MovingPlatformController : RaycastController {
                 RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, passengerMask);
 
                 // If found, stick platform and passenger together, then move the passenger
-                if (hit)
+                if (hit && hit.distance != 0)
                 {
                     if (!movedPassengers.Contains(hit.transform))
                     {
@@ -189,7 +189,7 @@ public class MovingPlatformController : RaycastController {
                 // Find a passenger riding the platform
                 RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up, rayLength, passengerMask);
                 // If found, stick platform and passenger together, then move the passenger
-                if (hit)
+                if (hit && hit.distance != 0)
                 {
                     if (!movedPassengers.Contains(hit.transform))
                     {

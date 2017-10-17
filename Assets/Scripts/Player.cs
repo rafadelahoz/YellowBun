@@ -6,9 +6,9 @@ using UnityEngine;
 public class Player : MonoBehaviour {
 
     float Gravity = -20;
-    float JumpSpeed = 8;
 
     public float JumpHeight = 4;
+    // public float MinJumpHeight = 1;
     public float TimeToApex = 0.4f;
 
     public float MoveSpeed = 6;
@@ -22,6 +22,9 @@ public class Player : MonoBehaviour {
     public float WallStickTime = 0.25f;
     float wallTimeToUnstick;
 
+    float JumpSpeed; // = 8;
+    // float MinJumpSpeed;
+
     Vector3 velocity;
     float hspeedSmoothing;
 
@@ -33,7 +36,7 @@ public class Player : MonoBehaviour {
 
         Gravity = -(2 * JumpHeight) / Mathf.Pow(TimeToApex, 2);
         JumpSpeed = Mathf.Abs(Gravity) * TimeToApex;
-
+        // MinJumpSpeed = Mathf.Sqrt(2 * Mathf.Abs(Gravity) * MinJumpHeight);
         print("G: " + Gravity + "; speed: " + JumpSpeed);
     }
 
@@ -77,11 +80,6 @@ public class Player : MonoBehaviour {
             }
         }
 
-        if (controller.collisions.above || controller.collisions.below)
-        {
-            velocity.y = 0;
-        }
-
         /* Jumping */
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -111,13 +109,20 @@ public class Player : MonoBehaviour {
         }
 
         // Short jump
-        if (Input.GetKeyUp(KeyCode.Space) && !controller.collisions.below)
+        if (Input.GetKeyUp(KeyCode.Space) && !controller.collisions.below && velocity.y > 0)
         {
             velocity.y *= 0.5f;
+            // if (velocity.y > MinJumpSpeed)
+            //     velocity.y = MinJumpSpeed;
         }
 
         velocity.y += Gravity * Time.deltaTime;
 
-        controller.Move(velocity * Time.deltaTime);
+        controller.Move(velocity * Time.deltaTime, input);
+
+        if (controller.collisions.above || controller.collisions.below)
+        {
+            velocity.y = 0;
+        }
     }
 }

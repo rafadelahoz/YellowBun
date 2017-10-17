@@ -8,6 +8,8 @@ public class Controller2D : RaycastController {
     public float maxDescendAngle = 75;
 
     public CollisionInfo collisions;
+    [HideInInspector]
+    public Vector2 playerInput;
 
     override public void Start() {
         base.Start();
@@ -17,6 +19,13 @@ public class Controller2D : RaycastController {
 
     public void Move(Vector3 velocity, bool standingOnPlatform = false)
     {
+        Move(velocity, Vector2.zero, standingOnPlatform); 
+    }
+
+    public void Move(Vector3 velocity, Vector2 input, bool standingOnPlatform = false)
+    {
+        playerInput = input;
+
         collisions.Reset();
         collisions.previousVelocity = velocity;
 
@@ -122,6 +131,25 @@ public class Controller2D : RaycastController {
 
             if (hit)
             {
+                if (hit.collider.tag == "OneWays")
+                {
+                    // Ignore oneways when going up 
+                    if (directionY > 0 || hit.distance == 0) {
+                        continue;
+                    }
+                    // Dont stop falling down
+                    if (collisions.fallingThrough)
+                    {
+                        continue; 
+                    }
+                    // Allow DOWN to fall through
+                    if (playerInput.y < 0) {
+                        collisions.fallingThrough = true;
+                        Invoke("ResetFallingThrough", .3f);
+                        continue;
+                    }
+                }
+
                 velocity.y = (hit.distance - skinWidth) * directionY;
                 rayLength = hit.distance;
 
@@ -198,16 +226,20 @@ public class Controller2D : RaycastController {
         }
     }
 
+    void ResetFallingThrough()
+    {
+        collisions.fallingThrough = false;
+    }
+
     public struct CollisionInfo
     {
         public bool above, below;
         public bool left, right;
         public bool climbingSlope, descendingSlope;
         public float slopeAngle, prevSlopeAngle;
-
         public Vector3 previousVelocity;
-
         public int facing;
+        public bool fallingThrough;
 
         public void Reset()
         {
