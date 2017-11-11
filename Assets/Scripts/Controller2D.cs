@@ -22,31 +22,31 @@ public class Controller2D : RaycastController {
         Move(velocity, Vector2.zero, standingOnPlatform); 
     }
 
-    public void Move(Vector3 velocity, Vector2 input, bool standingOnPlatform = false)
+    public void Move(Vector3 moveAmount, Vector2 input, bool standingOnPlatform = false)
     {
         playerInput = input;
 
         collisions.Reset();
-        collisions.previousVelocity = velocity;
+        collisions.previousVelocity = moveAmount;
 
         UpdateRaycastOrigins();
 
-        if (velocity.x != 0)
+        if (moveAmount.x != 0)
         {
-            collisions.facing = (int) Mathf.Sign(velocity.x);
+            collisions.facing = (int) Mathf.Sign(moveAmount.x);
         }
 
-        if (velocity.y < 0)
+        if (moveAmount.y < 0)
         {
-            DescendSlope(ref  velocity);
+            DescendSlope(ref  moveAmount);
         }
 
-        HorizontalCollisions(ref velocity);
+        HorizontalCollisions(ref moveAmount);
 
-        if (velocity.y != 0)
-            VerticalCollisions(ref velocity);
+        if (moveAmount.y != 0)
+            VerticalCollisions(ref moveAmount);
 
-        transform.Translate(velocity);
+        transform.Translate(moveAmount);
 
         if (standingOnPlatform)
             collisions.below = true;
