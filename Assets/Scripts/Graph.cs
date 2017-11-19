@@ -4,26 +4,34 @@ using UnityEngine;
 
 public class Graph : MonoBehaviour {
 
-    public Node[] graph;
+    public Node[] graph =  null;
     public int maximumDistance = 8;
 
 	// Use this for initialization
 	void Start () {
-        graph = this.GetComponentsInChildren<Node>();
 
-		foreach (Node nodeA in graph)
+	}
+	
+    public void InitializeListOfNodes()
+    {
+        if (this.graph.Length == 0)
         {
-            Vector3 position = nodeA.GetComponent<Transform>().position;
-            foreach (Node nodeB in graph)
+            graph = this.GetComponentsInChildren<Node>();
+
+            foreach (Node nodeA in graph)
             {
-                if (!nodeA.transform.position.Equals(nodeB.transform.position) && IsCloseEnough(nodeA, nodeB) && !nodeA.connectedWaypoints.Contains(nodeB))
+                Vector3 position = nodeA.GetComponent<Transform>().position;
+                foreach (Node nodeB in graph)
                 {
-                    nodeA.connectedWaypoints.Add(nodeB);
+                    if (!nodeA.transform.position.Equals(nodeB.transform.position) && IsCloseEnough(nodeA, nodeB) && !nodeA.connectedWaypoints.Contains(nodeB))
+                    {
+                        nodeA.connectedWaypoints.Add(nodeB);
+                    }
                 }
             }
         }
-	}
-	
+    }
+
     bool IsCloseEnough(Node nodeA, Node nodeB)
     {
         Vector3 positionA = nodeA.transform.position;

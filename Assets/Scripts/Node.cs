@@ -16,7 +16,6 @@ public class Node : MonoBehaviour {
 	void Update () {
 		if(!hasBeenChecked)
         {
-            Debug.Log("My list of nodes is: " + connectedWaypoints.Count);
             hasBeenChecked = true;
         }
 	}
