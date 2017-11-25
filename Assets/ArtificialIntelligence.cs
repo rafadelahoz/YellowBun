@@ -94,7 +94,7 @@ public class ArtificialIntelligence : MonoBehaviour
             openSet.Remove(current);
             closedSet.Add(current);
 
-            foreach (var neighbor in current.connectedWaypoints)
+            foreach (var neighbor in current.ConnectedWaypoints)
             {
                 if (closedSet.Contains(neighbor)) continue; // Ignore the neighbor which is already evaluated.
 
@@ -162,7 +162,7 @@ public class ArtificialIntelligence : MonoBehaviour
     // Initializes the scores for the aStar algorithm graph nodes
     private static Dictionary<Node, ScoreMap> InitializeAStarScores(Graph graph)
     {
-        return graph.graph.ToDictionary(node => node, node => new ScoreMap(int.MaxValue, int.MaxValue, null));
+        return graph.Waypoints.ToDictionary(node => node, node => new ScoreMap(int.MaxValue, int.MaxValue, null));
     }
 
     // Estimates a heuristic cost to get to a certain node according to the manhattan distance
@@ -210,7 +210,7 @@ public class ArtificialIntelligence : MonoBehaviour
         Node closestNode = null;
 
         // Find closest node
-        foreach (var node in Graph.graph)
+        foreach (var node in Graph.Waypoints)
         {
             var newDistance = DistanceToNode(position, node);
             if (!(shortestDistance > newDistance)) continue;
